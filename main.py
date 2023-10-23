@@ -85,7 +85,7 @@ def integral_arriba(a,b):
     P_denominador = float(P_denominador)
     Expr = sp.lambdify(t, Expr)
 
-    list_gamma = [gamma_up(P(i/N,a,b)) for i in ranglist_gammae(N)]
+    list_gamma = [gamma_up(P(i/N,a,b)) for i in range(N)]
 
     int_up_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_up
     int_up_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_up
