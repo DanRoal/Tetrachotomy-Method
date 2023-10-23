@@ -6,7 +6,6 @@ Autor: DanRoal
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 import sympy as sp
 
 #definimos el cambio de variable
@@ -49,7 +48,7 @@ def f(z):
 def f_1(z):
     return 1/(z - (0.5 + 0.5j))
 
-N=20
+N=25
 h = (1)/N
 
 
