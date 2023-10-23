@@ -52,15 +52,18 @@ def f_1(z):
 N=20
 h = (1)/N
 
+
 def integral_abajo(a,b):
     Expr = (t-a)**2 * (b-t)**2
     P_denominador = sp.integrate(Expr, (t, a, b))
     P_denominador = float(P_denominador)
     Expr = sp.lambdify(t, Expr)
 
-    int_down_0 = sum([f_1(gamma_down(P(i/N, a, b)))* Expr(i/N) for i in range(N)]) * h * gamma_Delta_down
-    int_down_1 = sum([f(gamma_down(P(i/N, a, b)))* Expr(i/N) for i in range(N)]) * h * gamma_Delta_down
-    int_down_2 = sum([f(gamma_down(P(i/N, a, b)))* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) * h * gamma_Delta_down
+    list_gamma = [gamma_down(P(i/N,a,b)) for i in range(N)]
+    
+    int_down_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_down
+    int_down_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_down
+    int_down_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) * h * gamma_Delta_down
     return [int_down_0, int_down_1, int_down_2]
 
 def integral_derecha(a,b):
@@ -69,9 +72,11 @@ def integral_derecha(a,b):
     P_denominador = float(P_denominador)
     Expr = sp.lambdify(t, Expr)
 
-    int_right_0 = sum([f_1(gamma_right(P(i/N, a, b)))* Expr(i/N) for i in range(N)]) * h * gamma_Delta_right
-    int_right_1 = sum([f(gamma_right(P(i/N, a, b)))* Expr(i/N) for i in range(N)]) * h * gamma_Delta_right
-    int_right_2 = sum([f(gamma_right(P(i/N, a, b)))* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) * h * gamma_Delta_right
+    list_gamma = [gamma_right(P(i/N,a,b)) for i in range(N)]
+
+    int_right_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_right
+    int_right_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_right
+    int_right_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) * h * gamma_Delta_right
     return [int_right_0, int_right_1, int_right_2]
 
 def integral_arriba(a,b):
@@ -80,9 +85,11 @@ def integral_arriba(a,b):
     P_denominador = float(P_denominador)
     Expr = sp.lambdify(t, Expr)
 
-    int_up_0 = sum([f_1(gamma_up(P(i/N, a, b)))* Expr(i/N) for i in range(N)]) * h * gamma_Delta_up
-    int_up_1 = sum([f(gamma_up(P(i/N, a, b)))* Expr(i/N) for i in range(N)]) * h * gamma_Delta_up
-    int_up_2 = sum([f(gamma_up(P(i/N, a, b)))* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) * h * gamma_Delta_up
+    list_gamma = [gamma_up(P(i/N,a,b)) for i in ranglist_gammae(N)]
+
+    int_up_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_up
+    int_up_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_up
+    int_up_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) * h * gamma_Delta_up
     return [int_up_0, int_up_1, int_up_2]
 
 def integral_izquierda(a,b):
@@ -91,9 +98,12 @@ def integral_izquierda(a,b):
     P_denominador = float(P_denominador)
     Expr = sp.lambdify(t, Expr)
 
-    int_left_0 = sum([f_1(gamma_left(P(i/N, a, b)))* Expr(i/N) for i in range(N)]) * h * gamma_Delta_left
-    int_left_1 = sum([f(gamma_left(P(i/N, a, b)))* Expr(i/N) for i in range(N)]) * h * gamma_Delta_left
-    int_left_2 = sum([f(gamma_left(P(i/N, a, b)))* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) * h * gamma_Delta_left
+    list_gamma = [gamma_left(P(i/N,a,b)) for i in range(N)]
+
+
+    int_left_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_left
+    int_left_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_left
+    int_left_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) * h * gamma_Delta_left
     return [int_left_0, int_left_1, int_left_2]
 
 lista_abajo = integral_abajo(0, np.pi/2)
