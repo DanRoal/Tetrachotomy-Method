@@ -16,21 +16,18 @@ def delta_P(x):
     return 30*(x-1)**2 * x**2
 
 #definimos la función que queremos integrar
-def f(x):
-    return np.sqrt(1 - x**2)
+
 
 ########### integramos normalmente ############
-N=4000000
+N=40000
 
 pi = 3.1415926535897932384626433
 
 h = (1)/N
 
 ########### integramos con metodo ############
-tic = time.time()
-integral_met = sum([delta_P(i/N) * f(P(i/N)) for i in range(N)]) * h
-toc = time.time()
-print(integral_met*4 , toc-tic)### La convergencia es rapidísima 
+
+
 print(pi)
 
 x_0, x_1 = 0, 1
@@ -62,6 +59,8 @@ def f(z: complex):
 def f_1(z: complex):
     return 1/(z - (0.5 + 0.5j))
 
+tic = time.time()
+
 print()
 
 #Integral precisa
@@ -71,18 +70,22 @@ int_arriba = sp.integrate(f(gamma_up(t))*gamma_Delta_up, (t, 1/2, 3/4))
 int_izquierda = sp.integrate(f(gamma_left(t))*gamma_Delta_left, (t, 3/4, 1))
 
 #nuestro intento con la aproximación
+toc = time.time()
+lista_P_i = [P(i/N) for i in range(N+1)]
 
-expr = sp.lambdify(t, (t)**2 * (1-t)**2)
-producto = (1/sp.integrate(expr(t), (t, 0, 1))) * h
-
-int_0_abajo = sum([f(gamma_down(P(i/N)))*delta_P(i/N) for i in range(int(N/4))]) *h* gamma_Delta_down
-int_0_derecha = sum([f(gamma_right(P(i/N)))*delta_P(i/N) for i in range(int(N/4),int(N/2))]) *h* gamma_Delta_right
-int_0_arriba = sum([f(gamma_up(P(i/N)))*delta_P(i/N) for i in range(int(N/2),int(3*N/4))]) *h* gamma_Delta_up
-int_0_izquierda = sum([f(gamma_left(P(i/N)))*delta_P(i/N) for i in range(int(3*N/4),N)]) *h* gamma_Delta_left
+int_0_abajo = sum([f(gamma_down(lista_P_i[i]))*delta_P(i/N) for i in range(int(N/4))])* gamma_Delta_down
+int_0_derecha = sum([f(gamma_right(lista_P_i[i]))*delta_P(i/N) for i in range(int(N/4),int(N/2))])* gamma_Delta_right
+int_0_arriba = sum([f(gamma_up(lista_P_i[i]))*delta_P(i/N) for i in range(int(N/2),int(3*N/4))])* gamma_Delta_up
+int_0_izquierda = sum([f(gamma_left(lista_P_i[i]))*delta_P(i/N) for i in range(int(3*N/4),N+1)])* gamma_Delta_left
 
 resultado = sp.simplify(int_abajo + int_derecha + int_arriba + int_izquierda)
 
-resultadoaprox = sp.simplify(int_0_abajo + int_0_derecha + int_0_arriba + int_0_izquierda)
+resultadoaprox = sp.simplify((int_0_abajo + int_0_derecha + int_0_arriba + int_0_izquierda)*h)
 
+diferencia = sp.simplify(resultado - resultadoaprox)
 print(resultado)
 print(resultadoaprox)
+print(diferencia)
+print(toc-tic)
+
+
