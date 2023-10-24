@@ -26,6 +26,7 @@ def delta_P(argumento, a, b):
     funcion =  sp.lambdify(x, delta)
     return funcion(argumento)
 
+##Definimos las curvas de integración
 def gamma_down(t):
     return complex((2/np.pi) * (x_1 - x_0) * t + x_0, y_0)
 gamma_Delta_down = 2/np.pi * (x_1 - x_0)
@@ -54,55 +55,58 @@ h = (1)/N
 
 def integral_abajo(a,b):
     Expr = (t-a)**2 * (b-t)**2
-    P_denominador = sp.integrate(Expr, (t, a, b))
+    P_denominador = 1/sp.integrate(Expr, (t, a, b))
     P_denominador = float(P_denominador)
     Expr = sp.lambdify(t, Expr)
 
     list_gamma = [gamma_down(P(i/N,a,b)) for i in range(N)]
+    producto = h*gamma_Delta_down*P_denominador
     
-    int_down_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_down
-    int_down_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_down
-    int_down_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) * h * gamma_Delta_down
+    int_down_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) *producto
+    int_down_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) *producto
+    int_down_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) *producto
     return [int_down_0, int_down_1, int_down_2]
 
 def integral_derecha(a,b):
     Expr = (t-a)**2 * (b-t)**2
-    P_denominador = sp.integrate(Expr, (t, a, b))
+    P_denominador = 1/sp.integrate(Expr, (t, a, b))
     P_denominador = float(P_denominador)
     Expr = sp.lambdify(t, Expr)
 
     list_gamma = [gamma_right(P(i/N,a,b)) for i in range(N)]
+    producto = h*gamma_Delta_right*P_denominador
 
-    int_right_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_right
-    int_right_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_right
-    int_right_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) * h * gamma_Delta_right
+    int_right_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) *producto
+    int_right_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) *producto
+    int_right_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) *producto
     return [int_right_0, int_right_1, int_right_2]
 
 def integral_arriba(a,b):
     Expr = (t-a)**2 * (b-t)**2
-    P_denominador = sp.integrate(Expr, (t, a, b))
+    P_denominador = 1/sp.integrate(Expr, (t, a, b))
     P_denominador = float(P_denominador)
     Expr = sp.lambdify(t, Expr)
 
     list_gamma = [gamma_up(P(i/N,a,b)) for i in range(N)]
+    producto = h*gamma_Delta_up*P_denominador
 
-    int_up_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_up
-    int_up_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_up
-    int_up_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) * h * gamma_Delta_up
+    int_up_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) * producto
+    int_up_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) * producto
+    int_up_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) * producto
     return [int_up_0, int_up_1, int_up_2]
 
 def integral_izquierda(a,b):
     Expr = (t-a)**2 * (b-t)**2
-    P_denominador = sp.integrate(Expr, (t, a, b))
+    P_denominador = 1/sp.integrate(Expr, (t, a, b))
     P_denominador = float(P_denominador)
     Expr = sp.lambdify(t, Expr)
 
     list_gamma = [gamma_left(P(i/N,a,b)) for i in range(N)]
+    producto = h*gamma_Delta_left*P_denominador
 
-
-    int_left_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_left
-    int_left_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) * h * gamma_Delta_left
-    int_left_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) * h * gamma_Delta_left
+    int_left_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) *producto
+    int_left_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) *producto
+    int_left_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) *producto
     return [int_left_0, int_left_1, int_left_2]
 
 lista_abajo = integral_abajo(0, np.pi/2)
