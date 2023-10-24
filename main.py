@@ -29,24 +29,24 @@ def delta_P(argumento, a, b):
 
 def gamma_down(t):
     return complex((2/np.pi) * (x_1 - x_0) * t + x_0, y_0)
-gamma_Delta_down = complex(2/np.pi * (x_1 - x_0), 0)
+gamma_Delta_down = 2/np.pi * (x_1 - x_0)
 
 def gamma_right(t):
     return complex(x_1, (2/np.pi) *(y_1 - y_0) * (t-np.pi/2) + y_0)
-gamma_Delta_right = complex(0, 2/np.pi * (y_1 - y_0))
+gamma_Delta_right = 2/np.pi * (y_1 - y_0)*1j
 
 def gamma_up(t):
     return complex((2/np.pi) *(x_1 - x_0) * (3*np.pi/2 - t) + x_0, y_1)
-gamma_Delta_up = complex(-2/np.pi * (x_1 - x_0), 0)
+gamma_Delta_up = -2/np.pi * (x_1 - x_0)
 
 def gamma_left(t):
     return complex(x_0, (2/np.pi) * (y_1 - y_0) * (2*np.pi - t) + y_0)
-gamma_Delta_left = complex(0, -2/np.pi * (y_1 - y_0))
+gamma_Delta_left = -2/np.pi * (y_1 - y_0)*1j
 
 #definimos la función que queremos integrar
-def f(z):
+def f(z: complex):
     return z/(z - (0.5 + 0.5j))
-def f_1(z):
+def f_1(z: complex):
     return 1/(z - (0.5 + 0.5j))
 
 N=20
