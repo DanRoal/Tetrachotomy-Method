@@ -8,6 +8,7 @@ Autor: DanRoal
 import numpy as np
 import sympy as sp
 import time
+from numba import njit
 
 #definimos el cambio de variable
 x_0, x_1 = 0, 1
@@ -56,7 +57,7 @@ def f(z: complex):
 def f_1(z: complex):
     return 1/(z - (0.5 + 0.5j))
 
-N=4000
+N=100
 h = (1)/N
 
 lista_P = [Pdefault(i/N) for i in range(N)]
@@ -68,9 +69,9 @@ def integral_abajo():
     L_gamm = [gamma_down(l_Preduced[i]) for i in range(N)]
     producto = h*gamma_Delta_down*0.25
     
-    int_down_0 = sp.simplify(sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto)
-    int_down_1 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) *producto)
-    int_down_2 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] * l_Preduced[i] for i in range(N)]) *producto)
+    int_down_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
+    int_down_1 = sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
+    int_down_2 = sum([f(L_gamm[i])* list_delP[i] * L_gamm[i] for i in range(N)]) *producto
     return [int_down_0, int_down_1, int_down_2]
 
 def integral_derecha():
@@ -78,9 +79,9 @@ def integral_derecha():
     L_gamm = [gamma_right(l_Preduced[i]) for i in range(N)]
     producto = h*gamma_Delta_right*0.25
 
-    int_right_0 = sp.simplify(sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto)
-    int_right_1 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) *producto)
-    int_right_2 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] * (l_Preduced[i]) for i in range(N)]) *producto)
+    int_right_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
+    int_right_1 = sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
+    int_right_2 = sum([f(L_gamm[i])* list_delP[i] * L_gamm[i] for i in range(N)]) *producto
     return [int_right_0, int_right_1, int_right_2]
 
 def integral_arriba():
@@ -88,9 +89,9 @@ def integral_arriba():
     L_gamm = [gamma_up(l_Preduced[i]) for i in range(N)]
     producto = h*gamma_Delta_up*0.25
 
-    int_up_0 = sp.simplify(sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) * producto)
-    int_up_1 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) * producto)
-    int_up_2 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] * (l_Preduced[i]) for i in range(N)]) * producto)
+    int_up_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) * producto
+    int_up_1 = sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) * producto
+    int_up_2 = sum([f(L_gamm[i])* list_delP[i] * L_gamm[i] for i in range(N)]) * producto
     return [int_up_0, int_up_1, int_up_2]
 
 def integral_izquierda():
@@ -98,9 +99,9 @@ def integral_izquierda():
     L_gamm = [gamma_left(l_Preduced[i]) for i in range(N)]
     producto = h*gamma_Delta_left*0.25
     
-    int_left_0 = sp.simplify(sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto)
-    int_left_1 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) *producto)
-    int_left_2 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] * l_Preduced[i] for i in range(N)]) *producto)
+    int_left_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
+    int_left_1 = sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
+    int_left_2 = sum([f(L_gamm[i])* list_delP[i] * L_gamm[i] for i in range(N)]) *producto
     return [int_left_0, int_left_1, int_left_2]
 tic = time.time()
 lista_abajo = integral_abajo()
