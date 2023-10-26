@@ -14,13 +14,11 @@ from numba import njit
 x_0, x_1 = 0, 1
 y_0, y_1 = 0, 1
 
-t = sp.symbols('t')
-x = sp.symbols('x')
-
+t, x= sp.symbols('t x')
 
 def P(x, m=2):
-    numerador = sp.integrate((t)**2 * (1-t)**2, (t, 0, x))
-    denominador = sp.integrate((t)**2 * (1-t)**2, (t, 0, 1))
+    numerador = sp.integrate((t)**(2*m -2) * (1-t)**(2*m -2), (t, 0, x))
+    denominador = sp.integrate((t)**(2*m -2) * (1-t)**(2*m -2), (t, 0, 1))
     return numerador/denominador
 
 def delta_P(argumento, m=2):
@@ -53,9 +51,9 @@ gamma_Delta_left = -4 * (y_1 - y_0)*1j
 
 #definimos la función que queremos integrar
 def f(z: complex):
-    return z/(z - (0.5 + 0.5j))
+    return z/(z - (0.1 + 0.5j))
 def f_1(z: complex):
-    return 1/(z - (0.5 + 0.5j))
+    return 1/(z - (0.1 + 0.5j))
 
 N=1000
 h = (1)/N
@@ -63,7 +61,52 @@ h = (1)/N
 lista_P = [Pdefault(i/N) for i in range(N)]
 list_delP = [delta_Pdefault(i/N) for i in range(N)]
 
+down_P = [lista_P[i]*0.25 for i in range(N)]
+right_P = [lista_P[i]*0.25 + 0.25 for i in range(N)]
+up_P = [lista_P[i]*0.25 + 0.5 for i in range(N)]
+left_P = [lista_P[i]*0.25 + 0.75 for i in range(N)]
 
+def integral_0():
+
+    abajo = sum([f_1(gamma_down(down_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_down
+    derecha = sum([f_1(gamma_right(right_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_right
+    arriba = sum([f_1(gamma_up(up_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_up
+    izquierda = sum([f_1(gamma_left(left_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_left
+
+    return sp.simplify((abajo + derecha + arriba + izquierda)*h*0.25)
+
+def integral_1():
+
+    abajo = sum([f(gamma_down(down_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_down
+    derecha = sum([f(gamma_right(right_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_right
+    arriba = sum([f(gamma_up(up_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_up
+    izquierda = sum([f(gamma_left(left_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_left
+
+    return sp.simplify((abajo + derecha + arriba + izquierda)*h*0.25)
+
+def integral_2():
+
+    abajo = sum([f(gamma_down(down_P[i]))*list_delP[i]*gamma_down(down_P[i]) for i in range(N)])*gamma_Delta_down
+    derecha = sum([f(gamma_right(right_P[i]))*list_delP[i]*gamma_right(right_P[i]) for i in range(N)])*gamma_Delta_right
+    arriba = sum([f(gamma_up(up_P[i]))*list_delP[i]*gamma_up(up_P[i]) for i in range(N)])*gamma_Delta_up
+    izquierda = sum([f(gamma_left(left_P[i]))*list_delP[i]*gamma_left(left_P[i]) for i in range(N)])*gamma_Delta_left
+
+    return sp.simplify((abajo + derecha + arriba + izquierda)*h*0.25)
+
+tic = time.time()
+integral_0 = integral_0()
+integral_1 = integral_1()
+integral_2 = integral_2()
+toc = time.time()
+
+print(integral_0)
+print(integral_1)
+print(integral_2)
+print(sp.simplify(integral_1/integral_0))
+print(sp.simplify(integral_2/integral_1))
+print(f"Tiempo de ejecución para las 3 integrales:{toc-tic}")
+
+"""
 def integral_abajo():
 
     L_gamm = [gamma_down(lista_P[i]*0.25) for i in range(N)]
@@ -119,3 +162,4 @@ print(integral_2)
 print(sp.simplify(integral_1/integral_0))
 print(sp.simplify(integral_2/integral_1))
 print(f"Tiempo de ejecución para las 3 integrales:{toc-tic}")
+"""
