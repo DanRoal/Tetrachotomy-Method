@@ -7,6 +7,7 @@ Autor: DanRoal
 
 import numpy as np
 import sympy as sp
+import time
 
 #definimos el cambio de variable
 x_0, x_1 = 0, 1
@@ -101,7 +102,7 @@ def integral_izquierda():
     int_left_1 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) *producto)
     int_left_2 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] * l_Preduced[i] for i in range(N)]) *producto)
     return [int_left_0, int_left_1, int_left_2]
-
+tic = time.time()
 lista_abajo = integral_abajo()
 lista_derecha = integral_derecha()
 lista_arriba = integral_arriba()
@@ -110,9 +111,10 @@ lista_izquierda = integral_izquierda()
 integral_0 = sp.simplify(lista_abajo[0] + lista_derecha[0] + lista_arriba[0] + lista_izquierda[0])
 integral_1 = sp.simplify(lista_abajo[1] + lista_derecha[1] + lista_arriba[1] + lista_izquierda[1])
 integral_2 = sp.simplify(lista_abajo[2] + lista_derecha[2] + lista_arriba[2] + lista_izquierda[2])
-
+toc = time.time()
 print(integral_0)
 print(integral_1)
 print(integral_2)
 print(sp.simplify(integral_1/integral_0))
 print(sp.simplify(integral_2/integral_1))
+print(f"Tiempo de ejecución para las 3 integrales:{toc-tic}")
