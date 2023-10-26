@@ -57,7 +57,7 @@ def f(z: complex):
 def f_1(z: complex):
     return 1/(z - (0.5 + 0.5j))
 
-N=100
+N=1000
 h = (1)/N
 
 lista_P = [Pdefault(i/N) for i in range(N)]
@@ -65,8 +65,8 @@ list_delP = [delta_Pdefault(i/N) for i in range(N)]
 
 
 def integral_abajo():
-    l_Preduced = [lista_P[i]*0.25 for i in range(N)]
-    L_gamm = [gamma_down(l_Preduced[i]) for i in range(N)]
+
+    L_gamm = [gamma_down(lista_P[i]*0.25) for i in range(N)]
     producto = h*gamma_Delta_down*0.25
     
     int_down_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
@@ -75,8 +75,8 @@ def integral_abajo():
     return [int_down_0, int_down_1, int_down_2]
 
 def integral_derecha():
-    l_Preduced = [lista_P[i]*0.25 + 0.25 for i in range(N)]
-    L_gamm = [gamma_right(l_Preduced[i]) for i in range(N)]
+
+    L_gamm = [gamma_right(lista_P[i]*0.25 + 0.25) for i in range(N)]
     producto = h*gamma_Delta_right*0.25
 
     int_right_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
@@ -85,8 +85,8 @@ def integral_derecha():
     return [int_right_0, int_right_1, int_right_2]
 
 def integral_arriba():
-    l_Preduced = [lista_P[i]*0.25 + 0.5 for i in range(N)]
-    L_gamm = [gamma_up(l_Preduced[i]) for i in range(N)]
+
+    L_gamm = [gamma_up(lista_P[i]*0.25 + 0.5) for i in range(N)]
     producto = h*gamma_Delta_up*0.25
 
     int_up_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) * producto
@@ -95,8 +95,8 @@ def integral_arriba():
     return [int_up_0, int_up_1, int_up_2]
 
 def integral_izquierda():
-    l_Preduced = [lista_P[i]*0.25 + 0.75 for i in range(N)]
-    L_gamm = [gamma_left(l_Preduced[i]) for i in range(N)]
+
+    L_gamm = [gamma_left(lista_P[i]*0.25 + 0.75) for i in range(N)]
     producto = h*gamma_Delta_left*0.25
     
     int_left_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
