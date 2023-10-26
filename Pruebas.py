@@ -71,21 +71,25 @@ int_izquierda = sp.integrate(f(gamma_left(t))*gamma_Delta_left, (t, 3/4, 1))
 
 #nuestro intento con la aproximación
 toc = time.time()
+
+tic_1 = time.time()
 lista_P_i = [P(i/N) for i in range(N+1)]
 
-int_0_abajo = sum([f(gamma_down(lista_P_i[i]))*delta_P(i/N) for i in range(int(N/4))])* gamma_Delta_down
-int_0_derecha = sum([f(gamma_right(lista_P_i[i]))*delta_P(i/N) for i in range(int(N/4),int(N/2))])* gamma_Delta_right
-int_0_arriba = sum([f(gamma_up(lista_P_i[i]))*delta_P(i/N) for i in range(int(N/2),int(3*N/4))])* gamma_Delta_up
-int_0_izquierda = sum([f(gamma_left(lista_P_i[i]))*delta_P(i/N) for i in range(int(3*N/4),N+1)])* gamma_Delta_left
+int_0_abajo = sum([f(gamma_down(lista_P_i[i]*0.25))*delta_P(i/N) for i in range(N)])* gamma_Delta_down
+int_0_derecha = sum([f(gamma_right(lista_P_i[i]*0.25 + 0.25))*delta_P(i/N) for i in range(N)])* gamma_Delta_right
+int_0_arriba = sum([f(gamma_up(lista_P_i[i]*0.25 + 0.5))*delta_P(i/N) for i in range(N)])* gamma_Delta_up
+int_0_izquierda = sum([f(gamma_left(lista_P_i[i]*.25 + 0.75))*delta_P(i/N) for i in range(N)])* gamma_Delta_left
 
+toc_1 = time.time()
 resultado = sp.simplify(int_abajo + int_derecha + int_arriba + int_izquierda)
 
-resultadoaprox = sp.simplify((int_0_abajo + int_0_derecha + int_0_arriba + int_0_izquierda)*h)
+resultadoaprox = sp.simplify((int_0_abajo + int_0_derecha + int_0_arriba + int_0_izquierda)*h*.25)
 
-diferencia = sp.simplify(resultado - resultadoaprox)
-print(resultado)
-print(resultadoaprox)
-print(diferencia)
-print(toc-tic)
+
+print(f"Resultado exacto: {resultado}")
+print(f"Resultado aproximado: {resultadoaprox}")
+
+print(f"tiempo ejecución exacto: {toc-tic}")
+print(f"tiempo ejecución aproximado: {toc_1-tic_1}")
 
 
