@@ -16,32 +16,32 @@ t = sp.symbols('t')
 x = sp.symbols('x')
 
 
-def P(x, a, b):
-    numerador = sp.integrate((t-a)**2 * (b-t)**2, (t, a, x))
-    denominador = sp.integrate((t-a)**2 * (b-t)**2, (t, a, b))
+def P(x, m=2):
+    numerador = sp.integrate((t)**2 * (1-t)**2, (t, 0, x))
+    denominador = sp.integrate((t)**2 * (1-t)**2, (t, 0, 1))
     return numerador/denominador
 
-def delta_P(argumento, a, b):
-    delta = sp.diff(P(x, a, b), x)
+def delta_P(argumento, m=2):
+    delta = sp.diff(P(x, m), x)
     funcion =  sp.lambdify(x, delta)
     return funcion(argumento)
 
 ##Definimos las curvas de integración
 def gamma_down(t):
-    return complex((2/np.pi) * (x_1 - x_0) * t + x_0, y_0)
-gamma_Delta_down = 2/np.pi * (x_1 - x_0)
+    return (4) * (x_1 - x_0) * t + x_0 + y_0*1j
+gamma_Delta_down = 4 * (x_1 - x_0)
 
 def gamma_right(t):
-    return complex(x_1, (2/np.pi) *(y_1 - y_0) * (t-np.pi/2) + y_0)
-gamma_Delta_right = 2/np.pi * (y_1 - y_0)*1j
+    return x_1+ ((4) *(y_1 - y_0) * (t-1/4) + y_0)*1j
+gamma_Delta_right = 4 * (y_1 - y_0)*1j
 
 def gamma_up(t):
-    return complex((2/np.pi) *(x_1 - x_0) * (3*np.pi/2 - t) + x_0, y_1)
-gamma_Delta_up = -2/np.pi * (x_1 - x_0)
+    return (4) *(x_1 - x_0) * (3/4 - t) + x_0+ y_1*1j
+gamma_Delta_up = -4 * (x_1 - x_0)
 
 def gamma_left(t):
-    return complex(x_0, (2/np.pi) * (y_1 - y_0) * (2*np.pi - t) + y_0)
-gamma_Delta_left = -2/np.pi * (y_1 - y_0)*1j
+    return x_0+ ((4) * (y_1 - y_0) * (1 - t) + y_0)*1j
+gamma_Delta_left = -4 * (y_1 - y_0)*1j
 
 #definimos la función que queremos integrar
 def f(z: complex):
