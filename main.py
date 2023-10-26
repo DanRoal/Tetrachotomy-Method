@@ -61,6 +61,7 @@ h = (1)/N
 lista_P = [Pdefault(i/N) for i in range(N)]
 list_delP = [delta_Pdefault(i/N) for i in range(N)]
 
+"""
 down_P = [lista_P[i]*0.25 for i in range(N)]
 right_P = [lista_P[i]*0.25 + 0.25 for i in range(N)]
 up_P = [lista_P[i]*0.25 + 0.5 for i in range(N)]
@@ -151,15 +152,14 @@ lista_abajo = integral_abajo()
 lista_derecha = integral_derecha()
 lista_arriba = integral_arriba()
 lista_izquierda = integral_izquierda()
+toc = time.time()
 
 integral_0 = sp.simplify(lista_abajo[0] + lista_derecha[0] + lista_arriba[0] + lista_izquierda[0])
 integral_1 = sp.simplify(lista_abajo[1] + lista_derecha[1] + lista_arriba[1] + lista_izquierda[1])
 integral_2 = sp.simplify(lista_abajo[2] + lista_derecha[2] + lista_arriba[2] + lista_izquierda[2])
-toc = time.time()
-print(integral_0)
-print(integral_1)
-print(integral_2)
-print(sp.simplify(integral_1/integral_0))
-print(sp.simplify(integral_2/integral_1))
+print(f"Integral 0:{integral_0}")
+print(f"Integral 1:{integral_1}")
+print(f"Integral 2:{integral_2}")
+print(f"Polo (integral 1/integral 0):{sp.simplify(integral_1/integral_0)}")
+print(f"Polo (integral 2/integral 1):{sp.simplify(integral_2/integral_1)}")
 print(f"Tiempo de ejecución para las 3 integrales:{toc-tic}")
-"""
