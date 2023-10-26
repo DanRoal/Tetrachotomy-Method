@@ -26,6 +26,12 @@ def delta_P(argumento, m=2):
     funcion =  sp.lambdify(x, delta)
     return funcion(argumento)
 
+def Pdefault(x):
+    return x**3 *(6*x**2 - 15*x + 10)
+
+def delta_Pdefault(x):
+    return 30*(x-1)**2 * x**2
+
 ##Definimos las curvas de integración
 def gamma_down(t):
     return (4) * (x_1 - x_0) * t + x_0 + y_0*1j
@@ -49,77 +55,64 @@ def f(z: complex):
 def f_1(z: complex):
     return 1/(z - (0.5 + 0.5j))
 
-N=25
+N=4000
 h = (1)/N
 
+lista_P = [Pdefault(i/N) for i in range(N)]
+list_delP = [delta_Pdefault(i/N) for i in range(N)]
 
-def integral_abajo(a,b):
-    Expr = (t-a)**2 * (b-t)**2
-    P_denominador = 1/sp.integrate(Expr, (t, a, b))
-    P_denominador = float(P_denominador)
-    Expr = sp.lambdify(t, Expr)
 
-    list_gamma = [gamma_down(P(i/N,a,b)) for i in range(N)]
-    producto = h*gamma_Delta_down*P_denominador
+def integral_abajo():
+    l_Preduced = [lista_P[i]*0.25 for i in range(N)]
+    L_gamm = [gamma_down(l_Preduced[i]) for i in range(N)]
+    producto = h*gamma_Delta_down*0.25
     
-    int_down_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) *producto
-    int_down_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) *producto
-    int_down_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) *producto
+    int_down_0 = sp.simplify(sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto)
+    int_down_1 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) *producto)
+    int_down_2 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] * l_Preduced[i] for i in range(N)]) *producto)
     return [int_down_0, int_down_1, int_down_2]
 
-def integral_derecha(a,b):
-    Expr = (t-a)**2 * (b-t)**2
-    P_denominador = 1/sp.integrate(Expr, (t, a, b))
-    P_denominador = float(P_denominador)
-    Expr = sp.lambdify(t, Expr)
+def integral_derecha():
+    l_Preduced = [lista_P[i]*0.25 + 0.25 for i in range(N)]
+    L_gamm = [gamma_right(l_Preduced[i]) for i in range(N)]
+    producto = h*gamma_Delta_right*0.25
 
-    list_gamma = [gamma_right(P(i/N,a,b)) for i in range(N)]
-    producto = h*gamma_Delta_right*P_denominador
-
-    int_right_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) *producto
-    int_right_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) *producto
-    int_right_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) *producto
+    int_right_0 = sp.simplify(sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto)
+    int_right_1 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) *producto)
+    int_right_2 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] * (l_Preduced[i]) for i in range(N)]) *producto)
     return [int_right_0, int_right_1, int_right_2]
 
-def integral_arriba(a,b):
-    Expr = (t-a)**2 * (b-t)**2
-    P_denominador = 1/sp.integrate(Expr, (t, a, b))
-    P_denominador = float(P_denominador)
-    Expr = sp.lambdify(t, Expr)
+def integral_arriba():
+    l_Preduced = [lista_P[i]*0.25 + 0.5 for i in range(N)]
+    L_gamm = [gamma_up(l_Preduced[i]) for i in range(N)]
+    producto = h*gamma_Delta_up*0.25
 
-    list_gamma = [gamma_up(P(i/N,a,b)) for i in range(N)]
-    producto = h*gamma_Delta_up*P_denominador
-
-    int_up_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) * producto
-    int_up_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) * producto
-    int_up_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) * producto
+    int_up_0 = sp.simplify(sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) * producto)
+    int_up_1 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) * producto)
+    int_up_2 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] * (l_Preduced[i]) for i in range(N)]) * producto)
     return [int_up_0, int_up_1, int_up_2]
 
-def integral_izquierda(a,b):
-    Expr = (t-a)**2 * (b-t)**2
-    P_denominador = 1/sp.integrate(Expr, (t, a, b))
-    P_denominador = float(P_denominador)
-    Expr = sp.lambdify(t, Expr)
-
-    list_gamma = [gamma_left(P(i/N,a,b)) for i in range(N)]
-    producto = h*gamma_Delta_left*P_denominador
-
-    int_left_0 = sum([f_1(list_gamma[i])* Expr(i/N) for i in range(N)]) *producto
-    int_left_1 = sum([f(list_gamma[i])* Expr(i/N) for i in range(N)]) *producto
-    int_left_2 = sum([f(list_gamma[i])* Expr(i/N) * P(i/N,a ,b) for i in range(N)]) *producto
+def integral_izquierda():
+    l_Preduced = [lista_P[i]*0.25 + 0.75 for i in range(N)]
+    L_gamm = [gamma_left(l_Preduced[i]) for i in range(N)]
+    producto = h*gamma_Delta_left*0.25
+    
+    int_left_0 = sp.simplify(sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto)
+    int_left_1 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) *producto)
+    int_left_2 = sp.simplify(sum([f(L_gamm[i])* list_delP[i] * l_Preduced[i] for i in range(N)]) *producto)
     return [int_left_0, int_left_1, int_left_2]
 
-lista_abajo = integral_abajo(0, np.pi/2)
-lista_derecha = integral_derecha(np.pi/2, np.pi)
-lista_arriba = integral_arriba(np.pi, 3*np.pi/2)
-lista_izquierda = integral_izquierda(3*np.pi/2, 2*np.pi)
+lista_abajo = integral_abajo()
+lista_derecha = integral_derecha()
+lista_arriba = integral_arriba()
+lista_izquierda = integral_izquierda()
 
-integral_0 = lista_abajo[0] + lista_derecha[0] + lista_arriba[0] + lista_izquierda[0]
-integral_1 = lista_abajo[1] + lista_derecha[1] + lista_arriba[1] + lista_izquierda[1]
-integral_2 = lista_abajo[2] + lista_derecha[2] + lista_arriba[2] + lista_izquierda[2]
+integral_0 = sp.simplify(lista_abajo[0] + lista_derecha[0] + lista_arriba[0] + lista_izquierda[0])
+integral_1 = sp.simplify(lista_abajo[1] + lista_derecha[1] + lista_arriba[1] + lista_izquierda[1])
+integral_2 = sp.simplify(lista_abajo[2] + lista_derecha[2] + lista_arriba[2] + lista_izquierda[2])
 
 print(integral_0)
 print(integral_1)
 print(integral_2)
-print(integral_1/integral_0)
-print(integral_2/integral_1)
+print(sp.simplify(integral_1/integral_0))
+print(sp.simplify(integral_2/integral_1))
