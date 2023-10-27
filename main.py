@@ -33,84 +33,36 @@ def delta_Pdefault(x):
     return 30*(x-1)**2 * x**2
 
 ##Definimos las curvas de integración
-def gamma_down(t):
+def gamma_down(t, x_0 = 0, x_1=1, y_0=0, y_1=1):
     return (4) * (x_1 - x_0) * t + x_0 + y_0*1j
-gamma_Delta_down = 4 * (x_1 - x_0)
 
-def gamma_right(t):
+
+def gamma_right(t, x_0 = 0, x_1=1, y_0=0, y_1=1):
     return x_1+ ((4) *(y_1 - y_0) * (t-1/4) + y_0)*1j
-gamma_Delta_right = 4 * (y_1 - y_0)*1j
 
-def gamma_up(t):
+def gamma_up(t, x_0 = 0, x_1=1, y_0=0, y_1=1):
     return (4) *(x_1 - x_0) * (3/4 - t) + x_0+ y_1*1j
-gamma_Delta_up = -4 * (x_1 - x_0)
 
-def gamma_left(t):
+def gamma_left(t, x_0 = 0, x_1=1, y_0=0, y_1=1):
     return x_0+ ((4) * (y_1 - y_0) * (1 - t) + y_0)*1j
-gamma_Delta_left = -4 * (y_1 - y_0)*1j
 
 #definimos la función que queremos integrar
 def f(z: complex):
-    return z/(z - (0.1 + 0.5j))
+    return z/(z - (0.5 + 0.5j))
 def f_1(z: complex):
-    return 1/(z - (0.1 + 0.5j))
+    return 1/(z - (0.5 + 0.5j))
 
-N=1000
+N=4000
 h = (1)/N
 
 lista_P = [Pdefault(i/N) for i in range(N)]
 list_delP = [delta_Pdefault(i/N) for i in range(N)]
 
-"""
-down_P = [lista_P[i]*0.25 for i in range(N)]
-right_P = [lista_P[i]*0.25 + 0.25 for i in range(N)]
-up_P = [lista_P[i]*0.25 + 0.5 for i in range(N)]
-left_P = [lista_P[i]*0.25 + 0.75 for i in range(N)]
+def integral_abajo(x_0=0, x_1=1, y_0=0, y_1=1):
 
-def integral_0():
+    gamma_Delta_down = 4 * (x_1 - x_0)
 
-    abajo = sum([f_1(gamma_down(down_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_down
-    derecha = sum([f_1(gamma_right(right_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_right
-    arriba = sum([f_1(gamma_up(up_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_up
-    izquierda = sum([f_1(gamma_left(left_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_left
-
-    return sp.simplify((abajo + derecha + arriba + izquierda)*h*0.25)
-
-def integral_1():
-
-    abajo = sum([f(gamma_down(down_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_down
-    derecha = sum([f(gamma_right(right_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_right
-    arriba = sum([f(gamma_up(up_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_up
-    izquierda = sum([f(gamma_left(left_P[i]))*list_delP[i] for i in range(N)])*gamma_Delta_left
-
-    return sp.simplify((abajo + derecha + arriba + izquierda)*h*0.25)
-
-def integral_2():
-
-    abajo = sum([f(gamma_down(down_P[i]))*list_delP[i]*gamma_down(down_P[i]) for i in range(N)])*gamma_Delta_down
-    derecha = sum([f(gamma_right(right_P[i]))*list_delP[i]*gamma_right(right_P[i]) for i in range(N)])*gamma_Delta_right
-    arriba = sum([f(gamma_up(up_P[i]))*list_delP[i]*gamma_up(up_P[i]) for i in range(N)])*gamma_Delta_up
-    izquierda = sum([f(gamma_left(left_P[i]))*list_delP[i]*gamma_left(left_P[i]) for i in range(N)])*gamma_Delta_left
-
-    return sp.simplify((abajo + derecha + arriba + izquierda)*h*0.25)
-
-tic = time.time()
-integral_0 = integral_0()
-integral_1 = integral_1()
-integral_2 = integral_2()
-toc = time.time()
-
-print(integral_0)
-print(integral_1)
-print(integral_2)
-print(sp.simplify(integral_1/integral_0))
-print(sp.simplify(integral_2/integral_1))
-print(f"Tiempo de ejecución para las 3 integrales:{toc-tic}")
-
-"""
-def integral_abajo():
-
-    L_gamm = [gamma_down(lista_P[i]*0.25) for i in range(N)]
+    L_gamm = [gamma_down(lista_P[i]*0.25, x_0, x_1,y_0,y_1) for i in range(N)]
     producto = h*gamma_Delta_down*0.25
     
     int_down_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
@@ -118,9 +70,11 @@ def integral_abajo():
     int_down_2 = sum([f(L_gamm[i])* list_delP[i] * L_gamm[i] for i in range(N)]) *producto
     return [int_down_0, int_down_1, int_down_2]
 
-def integral_derecha():
+def integral_derecha(x_0=0, x_1=1, y_0=0, y_1=1):
 
-    L_gamm = [gamma_right(lista_P[i]*0.25 + 0.25) for i in range(N)]
+    gamma_Delta_right = 4 * (y_1 - y_0)*1j
+
+    L_gamm = [gamma_right(lista_P[i]*0.25 + 0.25, x_0, x_1,y_0,y_1) for i in range(N)]
     producto = h*gamma_Delta_right*0.25
 
     int_right_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
@@ -128,9 +82,11 @@ def integral_derecha():
     int_right_2 = sum([f(L_gamm[i])* list_delP[i] * L_gamm[i] for i in range(N)]) *producto
     return [int_right_0, int_right_1, int_right_2]
 
-def integral_arriba():
+def integral_arriba(x_0=0, x_1=1, y_0=0, y_1=1):
 
-    L_gamm = [gamma_up(lista_P[i]*0.25 + 0.5) for i in range(N)]
+    gamma_Delta_up = -4 * (x_1 - x_0)
+
+    L_gamm = [gamma_up(lista_P[i]*0.25 + 0.5, x_0, x_1,y_0,y_1) for i in range(N)]
     producto = h*gamma_Delta_up*0.25
 
     int_up_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) * producto
@@ -138,15 +94,18 @@ def integral_arriba():
     int_up_2 = sum([f(L_gamm[i])* list_delP[i] * L_gamm[i] for i in range(N)]) * producto
     return [int_up_0, int_up_1, int_up_2]
 
-def integral_izquierda():
+def integral_izquierda(x_0=0, x_1=1, y_0=0, y_1=1):
 
-    L_gamm = [gamma_left(lista_P[i]*0.25 + 0.75) for i in range(N)]
+    gamma_Delta_left = -4 * (y_1 - y_0)*1j
+
+    L_gamm = [gamma_left(lista_P[i]*0.25 + 0.75, x_0, x_1,y_0,y_1) for i in range(N)]
     producto = h*gamma_Delta_left*0.25
     
     int_left_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
     int_left_1 = sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
     int_left_2 = sum([f(L_gamm[i])* list_delP[i] * L_gamm[i] for i in range(N)]) *producto
     return [int_left_0, int_left_1, int_left_2]
+
 tic = time.time()
 lista_abajo = integral_abajo()
 lista_derecha = integral_derecha()
@@ -157,6 +116,7 @@ toc = time.time()
 integral_0 = sp.simplify(lista_abajo[0] + lista_derecha[0] + lista_arriba[0] + lista_izquierda[0])
 integral_1 = sp.simplify(lista_abajo[1] + lista_derecha[1] + lista_arriba[1] + lista_izquierda[1])
 integral_2 = sp.simplify(lista_abajo[2] + lista_derecha[2] + lista_arriba[2] + lista_izquierda[2])
+
 print(f"Integral 0:{integral_0}")
 print(f"Integral 1:{integral_1}")
 print(f"Integral 2:{integral_2}")
