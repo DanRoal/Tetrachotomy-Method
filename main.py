@@ -14,7 +14,7 @@ from numba import njit
 x_0, x_1 = 0, 1
 y_0, y_1 = 0, 1
 
-t, x= sp.symbols('t x')
+t, x, z= sp.symbols('t x z')
 
 def P(x, m=2):
     numerador = sp.integrate((t)**(2*m -2) * (1-t)**(2*m -2), (t, 0, x))
@@ -52,74 +52,84 @@ def f(z: complex):
 def f_1(z: complex):
     return 1/(z - (0.5 + 0.5j))
 
-N=4000
+N=1000
 h = (1)/N
 
 lista_P = [Pdefault(i/N) for i in range(N)]
 list_delP = [delta_Pdefault(i/N) for i in range(N)]
 
-def integral_abajo(x_0=0, x_1=1, y_0=0, y_1=1):
+def integral_abajo(f = f,x_0=0, x_1=1, y_0=0, y_1=1):
 
     gamma_Delta_down = 4 * (x_1 - x_0)
 
     L_gamm = [gamma_down(lista_P[i]*0.25, x_0, x_1,y_0,y_1) for i in range(N)]
+    lista_f = [f(L_gamm[i]) * list_delP[i] for i in range(N)]
     producto = h*gamma_Delta_down*0.25
     
-    int_down_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
-    int_down_1 = sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
-    int_down_2 = sum([f(L_gamm[i])* list_delP[i] * L_gamm[i] for i in range(N)]) *producto
+    int_down_0 = sum([lista_f[i] * 1/L_gamm[i] for i in range(1,N)]) *producto
+    int_down_1 = sum([lista_f[i] for i in range(N)]) *producto
+    int_down_2 = sum([lista_f[i] * L_gamm[i] for i in range(N)]) *producto
     return [int_down_0, int_down_1, int_down_2]
 
-def integral_derecha(x_0=0, x_1=1, y_0=0, y_1=1):
+def integral_derecha(f = f,x_0=0, x_1=1, y_0=0, y_1=1):
 
     gamma_Delta_right = 4 * (y_1 - y_0)*1j
 
     L_gamm = [gamma_right(lista_P[i]*0.25 + 0.25, x_0, x_1,y_0,y_1) for i in range(N)]
+    lista_f = [f(L_gamm[i]) * list_delP[i] for i in range(N)]
     producto = h*gamma_Delta_right*0.25
 
-    int_right_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
-    int_right_1 = sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
-    int_right_2 = sum([f(L_gamm[i])* list_delP[i] * L_gamm[i] for i in range(N)]) *producto
+    int_right_0 = sum([lista_f[i] * 1/L_gamm[i] for i in range(1,N)]) *producto
+    int_right_1 = sum([lista_f[i] for i in range(N)]) *producto
+    int_right_2 = sum([lista_f[i] * L_gamm[i] for i in range(N)]) *producto
     return [int_right_0, int_right_1, int_right_2]
 
-def integral_arriba(x_0=0, x_1=1, y_0=0, y_1=1):
+def integral_arriba(f= f, x_0=0, x_1=1, y_0=0, y_1=1):
 
     gamma_Delta_up = -4 * (x_1 - x_0)
 
     L_gamm = [gamma_up(lista_P[i]*0.25 + 0.5, x_0, x_1,y_0,y_1) for i in range(N)]
+    lista_f = [f(L_gamm[i]) * list_delP[i] for i in range(N)]
     producto = h*gamma_Delta_up*0.25
 
-    int_up_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) * producto
-    int_up_1 = sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) * producto
-    int_up_2 = sum([f(L_gamm[i])* list_delP[i] * L_gamm[i] for i in range(N)]) * producto
+    int_up_0 = sum([lista_f[i] * 1/L_gamm[i]for i in range(1,N)]) * producto
+    int_up_1 = sum([lista_f[i] for i in range(N)]) * producto
+    int_up_2 = sum([lista_f[i] * L_gamm[i] for i in range(N)]) * producto
     return [int_up_0, int_up_1, int_up_2]
 
-def integral_izquierda(x_0=0, x_1=1, y_0=0, y_1=1):
+def integral_izquierda(f=f,x_0=0, x_1=1, y_0=0, y_1=1):
 
     gamma_Delta_left = -4 * (y_1 - y_0)*1j
 
     L_gamm = [gamma_left(lista_P[i]*0.25 + 0.75, x_0, x_1,y_0,y_1) for i in range(N)]
+    lista_f = [f(L_gamm[i]) * list_delP[i] for i in range(N)]
     producto = h*gamma_Delta_left*0.25
     
-    int_left_0 = sum([f_1(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
-    int_left_1 = sum([f(L_gamm[i])* list_delP[i] for i in range(N)]) *producto
-    int_left_2 = sum([f(L_gamm[i])* list_delP[i] * L_gamm[i] for i in range(N)]) *producto
+    int_left_0 = sum([lista_f[i] * 1/L_gamm[i] for i in range(1,N)]) *producto
+    int_left_1 = sum([lista_f[i] for i in range(N)]) *producto
+    int_left_2 = sum([lista_f[i] * L_gamm[i] for i in range(N)]) *producto
     return [int_left_0, int_left_1, int_left_2]
 
-tic = time.time()
-lista_abajo = integral_abajo()
-lista_derecha = integral_derecha()
-lista_arriba = integral_arriba()
-lista_izquierda = integral_izquierda()
-toc = time.time()
+def integrales(funcion, x_0, x_1, y_0, y_1):
+    """
+    función que obtiene las tres integrales de la función dada en el rectángulo dado.
+    """
+    lista_abajo = integral_abajo()
+    lista_derecha = integral_derecha()
+    lista_arriba = integral_arriba()
+    lista_izquierda = integral_izquierda()
 
-integral_0 = sp.simplify(lista_abajo[0] + lista_derecha[0] + lista_arriba[0] + lista_izquierda[0])
-integral_1 = sp.simplify(lista_abajo[1] + lista_derecha[1] + lista_arriba[1] + lista_izquierda[1])
-integral_2 = sp.simplify(lista_abajo[2] + lista_derecha[2] + lista_arriba[2] + lista_izquierda[2])
+    int_0 = lista_abajo[0] + lista_derecha[0] + lista_arriba[0] + lista_izquierda[0]
+    int_1 = lista_abajo[1] + lista_derecha[1] + lista_arriba[1] + lista_izquierda[1]
+    int_2 = lista_abajo[2] + lista_derecha[2] + lista_arriba[2] + lista_izquierda[2]
 
-print(f"Integral 0:{integral_0}")
-print(f"Integral 1:{integral_1}")
-print(f"Integral 2:{integral_2}")
-print(f"Polo (integral 1/integral 0):{sp.simplify(integral_1/integral_0)}")
-print(f"Polo (integral 2/integral 1):{sp.simplify(integral_2/integral_1)}")
-print(f"Tiempo de ejecución para las 3 integrales:{toc-tic}")
+    return[int_0, int_1, int_2]
+
+def Encontrar_polos(funcion, x_0, x_1, y_0, y_1):
+    """
+    Función que encuentra polos de una función compleja en un rectángulo dado.
+    """
+
+
+    return
+
