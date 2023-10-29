@@ -53,7 +53,7 @@ def f(z):
 def f_1(z):
     return 1/((z - (0.2 + 0.2j))*(z - (0.8 + 0.8j)))
 
-N=1000
+N=4000
 h = (1)/N
 
 lista_P = [Pdefault(i/N) for i in range(N)]
@@ -136,7 +136,7 @@ def Encontrar_polos(funcion, x_0, x_1, y_0, y_1, tol = 1e-10):
     """
     ints = integrales(funcion, x_0, x_1, y_0, y_1)
 
-    if abs(ints[0].real- ints[1].real) <= tol and abs(ints[0].imag- ints[1].imag) <= tol:
+    if abs(ints[0].real) and abs(ints[0].imag) and abs(ints[1].real) and abs(ints[1].imag) <= tol:
         return
     polo_1 = ints[1]/ints[0]
     polo_2 = ints[2]/ints[1]
@@ -153,11 +153,26 @@ def Encontrar_polos(funcion, x_0, x_1, y_0, y_1, tol = 1e-10):
         cuadro_abj = Encontrar_polos(funcion, x_0, (x_0 + x_1)/2, y_0, (y_0 + y_1)/2, tol)
 
         lista = [cuadro_izq, cuadro_der, cuadro_arr, cuadro_abj]
+        filtrada = [i for i in lista if i != None]
+        
+        if len(filtrada) == 0:
+            return
+        elif len(filtrada) == 1:
+            return filtrada[0]
+        elif len(filtrada) == 2:
+            return filtrada[0], filtrada[1]
+        elif len(filtrada) == 3:
+            return filtrada[0], filtrada[1], filtrada[2]
+        elif len(filtrada) == 4:
+            return filtrada[0], filtrada[1], filtrada[2], filtrada[3]
 
-        return [i for i in lista if i != None]
+def amortiguado(t):
+    return 1/(t*(-1-2j*(5+2j)) + 8**2)
+
 
 tic = time.time()
-polos = Encontrar_polos(f, -1, 1, -1, 1)
+polos = Encontrar_polos(amortiguado, -100, 100, -100, 100)
 toc = time.time()
+
 print(polos)
 print(f"tiempo de ejecución: {toc-tic}")

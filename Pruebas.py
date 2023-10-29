@@ -86,7 +86,8 @@ resultadoaprox = sp.simplify((int_0_abajo + int_0_derecha + int_0_arriba + int_0
 
 toc_1 = time.time()
 
-
+valor = 2,2,24 
+print(f"Resultado exacto: {valor}")
 
 print(f"Resultado aproximado: {resultadoaprox}")
 
