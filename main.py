@@ -15,6 +15,7 @@ x_0, x_1 = 0, 1
 y_0, y_1 = 0, 1
 
 t, x, z= sp.symbols('t x z')
+a, b = sp.symbols('a b')
 
 def P(x, m=2):
     numerador = sp.integrate((t)**(2*m -2) * (1-t)**(2*m -2), (t, 0, x))
@@ -47,10 +48,10 @@ def gamma_left(t, x_0 = 0, x_1=1, y_0=0, y_1=1):
     return x_0+ ((4) * (y_1 - y_0) * (1 - t) + y_0)*1j
 
 #definimos la función que queremos integrar
-def f(z: complex):
-    return z/(z - (0.5 + 0.5j))
-def f_1(z: complex):
-    return 1/(z - (0.5 + 0.5j))
+def f(z):
+    return z/((z - (0.2 + 0.2j))*(z - (0.8 + 0.8j)))
+def f_1(z):
+    return 1/((z - (0.2 + 0.2j))*(z - (0.8 + 0.8j)))
 
 N=1000
 h = (1)/N
@@ -114,10 +115,10 @@ def integrales(funcion, x_0, x_1, y_0, y_1):
     """
     función que obtiene las tres integrales de la función dada en el rectángulo dado.
     """
-    lista_abajo = integral_abajo()
-    lista_derecha = integral_derecha()
-    lista_arriba = integral_arriba()
-    lista_izquierda = integral_izquierda()
+    lista_abajo = integral_abajo(funcion, x_0, x_1, y_0, y_1)
+    lista_derecha = integral_derecha(funcion, x_0, x_1, y_0, y_1)
+    lista_arriba = integral_arriba(funcion, x_0, x_1, y_0, y_1)
+    lista_izquierda = integral_izquierda(funcion, x_0, x_1, y_0, y_1)
 
     int_0 = lista_abajo[0] + lista_derecha[0] + lista_arriba[0] + lista_izquierda[0]
     int_1 = lista_abajo[1] + lista_derecha[1] + lista_arriba[1] + lista_izquierda[1]
@@ -125,11 +126,38 @@ def integrales(funcion, x_0, x_1, y_0, y_1):
 
     return[int_0, int_1, int_2]
 
-def Encontrar_polos(funcion, x_0, x_1, y_0, y_1):
+def Encontrar_polos(funcion, x_0, x_1, y_0, y_1, tol = 1e-10):
     """
     Función que encuentra polos de una función compleja en un rectángulo dado.
+    
+    El parámetro tol es la diferencia que deben tener 2 cocientes de 
+    integrales para que se considere el mísmo número. En otras palabra es la forma de determinar
+    si existe un solo polo en el rectángulo dado.
     """
+    ints = integrales(funcion, x_0, x_1, y_0, y_1)
+
+    if abs(ints[0].real- ints[1].real) <= tol and abs(ints[0].imag- ints[1].imag) <= tol:
+        return
+    polo_1 = ints[1]/ints[0]
+    polo_2 = ints[2]/ints[1]
 
 
-    return
+    if abs(polo_1.real - polo_2.real) <= tol and abs(polo_1.imag - polo_2.imag) <= tol:
+        resultado = (ints[1]/ints[0] + ints[2]/ints[1])/2
+        return resultado
+        
+    else:
+        cuadro_izq = Encontrar_polos(funcion, x_0, (x_0 + x_1)/2, (y_0 + y_1)/2, y_1, tol)
+        cuadro_der = Encontrar_polos(funcion, (x_0 + x_1)/2, x_1, (y_0 + y_1)/2, y_1, tol)
+        cuadro_arr = Encontrar_polos(funcion, (x_0 + x_1)/2, x_1, y_0, (y_0 + y_1)/2, tol)
+        cuadro_abj = Encontrar_polos(funcion, x_0, (x_0 + x_1)/2, y_0, (y_0 + y_1)/2, tol)
 
+        lista = [cuadro_izq, cuadro_der, cuadro_arr, cuadro_abj]
+
+        return [i for i in lista if i != None]
+
+tic = time.time()
+polos = Encontrar_polos(f, -1, 1, -1, 1)
+toc = time.time()
+print(polos)
+print(f"tiempo de ejecución: {toc-tic}")
