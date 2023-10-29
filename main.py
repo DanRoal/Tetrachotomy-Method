@@ -33,10 +33,11 @@ def Pdefault(x):
 def delta_Pdefault(x):
     return 30*(x-1)**2 * x**2
 
+
 ##Definimos las curvas de integración
+
 def gamma_down(t, x_0 = 0, x_1=1, y_0=0, y_1=1):
     return (4) * (x_1 - x_0) * t + x_0 + y_0*1j
-
 
 def gamma_right(t, x_0 = 0, x_1=1, y_0=0, y_1=1):
     return x_1+ ((4) *(y_1 - y_0) * (t-1/4) + y_0)*1j
@@ -47,6 +48,7 @@ def gamma_up(t, x_0 = 0, x_1=1, y_0=0, y_1=1):
 def gamma_left(t, x_0 = 0, x_1=1, y_0=0, y_1=1):
     return x_0+ ((4) * (y_1 - y_0) * (1 - t) + y_0)*1j
 
+
 #definimos la función que queremos integrar
 def f(z):
     return z/((z - (0.2 + 0.2j))*(z - (0.8 + 0.8j)))
@@ -55,6 +57,7 @@ def f_1(z):
 
 N=4000
 h = (1)/N
+cont = 0
 
 lista_P = [Pdefault(i/N) for i in range(N)]
 list_delP = [delta_Pdefault(i/N) for i in range(N)]
@@ -90,10 +93,11 @@ def integral_arriba(f= f, x_0=0, x_1=1, y_0=0, y_1=1):
     gamma_Delta_up = -4 * (x_1 - x_0)
 
     L_gamm = [gamma_up(lista_P[i]*0.25 + 0.5, x_0, x_1,y_0,y_1) for i in range(N)]
+    lgam_filt = [i for i in L_gamm if i != 0]
     lista_f = [f(L_gamm[i]) * list_delP[i] for i in range(N)]
     producto = h*gamma_Delta_up*0.25
 
-    int_up_0 = sum([lista_f[i] * 1/L_gamm[i]for i in range(1,N)]) * producto
+    int_up_0 = sum([lista_f[i] * 1/lgam_filt[i] for i in range(len(lgam_filt))]) * producto
     int_up_1 = sum([lista_f[i] for i in range(N)]) * producto
     int_up_2 = sum([lista_f[i] * L_gamm[i] for i in range(N)]) * producto
     return [int_up_0, int_up_1, int_up_2]
@@ -126,17 +130,38 @@ def integrales(funcion, x_0, x_1, y_0, y_1):
 
     return[int_0, int_1, int_2]
 
-def Encontrar_polos(funcion, x_0, x_1, y_0, y_1, tol = 1e-10):
+def Encontrar_polos(funcion, x_0, x_1, y_0, y_1, tol = 1e-10, contador = 1):
     """
     Función que encuentra polos de una función compleja en un rectángulo dado.
     
-    El parámetro tol es la diferencia que deben tener 2 cocientes de 
-    integrales para que se considere el mísmo número. En otras palabra es la forma de determinar
-    si existe un solo polo en el rectángulo dado.
+    El parámetro tol es la diferencia que deben tener 2 números para ser
+    considerados iguales.
     """
     ints = integrales(funcion, x_0, x_1, y_0, y_1)
+    global cont
 
-    if abs(ints[0].real) and abs(ints[0].imag) and abs(ints[1].real) and abs(ints[1].imag) <= tol:
+    if (abs(ints[1].real) <=tol and abs(ints[1].imag) <= tol):
+        if cont < contador:
+            cont += 1
+            cuadro_izq = Encontrar_polos(funcion, x_0, (x_0 + x_1)/2, (y_0 + y_1)/2, y_1, tol)
+            cuadro_der = Encontrar_polos(funcion, (x_0 + x_1)/2, x_1, (y_0 + y_1)/2, y_1, tol)
+            cuadro_arr = Encontrar_polos(funcion, (x_0 + x_1)/2, x_1, y_0, (y_0 + y_1)/2, tol)
+            cuadro_abj = Encontrar_polos(funcion, x_0, (x_0 + x_1)/2, y_0, (y_0 + y_1)/2, tol)
+
+            lista = [cuadro_izq, cuadro_der, cuadro_arr, cuadro_abj]
+            filtrada = [i for i in lista if i != None]
+            filtrada = filtrado_igualdades(filtrada)
+            
+            if len(filtrada) == 0:
+                return
+            elif len(filtrada) == 1:
+                return filtrada[0]
+            elif len(filtrada) == 2:
+                return filtrada[0], filtrada[1]
+            elif len(filtrada) == 3:
+                return filtrada[0], filtrada[1], filtrada[2]
+            elif len(filtrada) == 4:
+                return filtrada[0], filtrada[1], filtrada[2], filtrada[3]
         return
     polo_1 = ints[1]/ints[0]
     polo_2 = ints[2]/ints[1]
@@ -154,6 +179,7 @@ def Encontrar_polos(funcion, x_0, x_1, y_0, y_1, tol = 1e-10):
 
         lista = [cuadro_izq, cuadro_der, cuadro_arr, cuadro_abj]
         filtrada = [i for i in lista if i != None]
+        filtrada = filtrado_igualdades(filtrada)
         
         if len(filtrada) == 0:
             return
@@ -166,12 +192,25 @@ def Encontrar_polos(funcion, x_0, x_1, y_0, y_1, tol = 1e-10):
         elif len(filtrada) == 4:
             return filtrada[0], filtrada[1], filtrada[2], filtrada[3]
 
+def filtrado_igualdades(cosa, tol = 1e-10):
+    polos_sin_filtrar = list(cosa)
+    for i in range(len(polos_sin_filtrar)):
+        if polos_sin_filtrar[i] == None:
+            continue
+        for j in range(i+1, len(polos_sin_filtrar)):
+            if (abs(polos_sin_filtrar[i].real - polos_sin_filtrar[j].real) <= tol and 
+                abs(polos_sin_filtrar[i].imag - polos_sin_filtrar[j].imag) <= tol):
+                polos_sin_filtrar[j] = None
+    polos_filtrados = [i for i in polos_sin_filtrar if i != None]
+    return polos_filtrados
+        
+
 def amortiguado(t):
-    return 1/(t*(-1-2j*(5+2j)) + 8**2)
+    return 1/(-t**2-t*2j*(5) + 8**2)
 
 
 tic = time.time()
-polos = Encontrar_polos(amortiguado, -100, 100, -100, 100)
+polos = Encontrar_polos(amortiguado, x_0=-10, x_1=7, y_0=-10, y_1=10)
 toc = time.time()
 
 print(polos)
