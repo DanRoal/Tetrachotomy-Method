@@ -208,6 +208,9 @@ def filtrado_igualdades(cosa, tol = 1e-10):
 def amortiguado(t):
     return 1/(-t**2-t*2j*(5) + 8**2)
 
+def hem(z,t):
+    return exp(-z*t*1j)/(z-1-1j)
+
 
 tic = time.time()
 polos = Encontrar_polos(amortiguado, x_0=-100, x_1=100, y_0=-100, y_1=100)
