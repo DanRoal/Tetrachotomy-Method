@@ -210,8 +210,9 @@ def amortiguado(t):
 
 
 tic = time.time()
-polos = Encontrar_polos(amortiguado, x_0=-10, x_1=7, y_0=-10, y_1=10)
+polos = Encontrar_polos(amortiguado, x_0=-100, x_1=100, y_0=-100, y_1=100)
 toc = time.time()
 
-print(polos)
+for i in polos:
+    print(f"polo: {i}")
 print(f"tiempo de ejecución: {toc-tic}")
