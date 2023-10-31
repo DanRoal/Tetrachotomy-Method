@@ -71,7 +71,7 @@ def integral_abajo(f = f,x_0=0, x_1=1, y_0=0, y_1=1):
     lista_f = [f(L_gamm[i]) * list_delP[i] for i in range(N)]
     producto = h*gamma_Delta_down*0.25
     
-    int_down_0 = sum([lista_f[i] for i in range(1,N)]) *producto
+    int_down_0 = sum(lista_f) *producto
     int_down_1 = sum([lista_f[i] * L_gamm[i] for i in range(N)]) *producto
     int_down_2 = sum([lista_f[i] * L_gamm[i]**2 for i in range(N)]) *producto
     return [int_down_0, int_down_1, int_down_2]
@@ -84,7 +84,7 @@ def integral_derecha(f = f,x_0=0, x_1=1, y_0=0, y_1=1):
     lista_f = [f(L_gamm[i]) * list_delP[i] for i in range(N)]
     producto = h*gamma_Delta_right*0.25
 
-    int_right_0 = sum([lista_f[i] for i in range(1,N)]) *producto
+    int_right_0 = sum(lista_f) *producto
     int_right_1 = sum([lista_f[i] * L_gamm[i] for i in range(N)]) *producto
     int_right_2 = sum([lista_f[i] * L_gamm[i]**2 for i in range(N)]) *producto
     return [int_right_0, int_right_1, int_right_2]
@@ -97,7 +97,7 @@ def integral_arriba(f= f, x_0=0, x_1=1, y_0=0, y_1=1):
     lista_f = [f(L_gamm[i]) * list_delP[i] for i in range(N)]
     producto = h*gamma_Delta_up*0.25
 
-    int_up_0 = sum([lista_f[i] for i in range(N)]) * producto
+    int_up_0 = sum(lista_f) * producto
     int_up_1 = sum([lista_f[i] * L_gamm[i] for i in range(N)]) * producto
     int_up_2 = sum([lista_f[i] * L_gamm[i]**2 for i in range(N)]) * producto
     return [int_up_0, int_up_1, int_up_2]
@@ -110,7 +110,7 @@ def integral_izquierda(f=f,x_0=0, x_1=1, y_0=0, y_1=1):
     lista_f = [f(L_gamm[i]) * list_delP[i] for i in range(N)]
     producto = h*gamma_Delta_left*0.25
     
-    int_left_0 = sum([lista_f[i] for i in range(1,N)]) *producto
+    int_left_0 = sum(lista_f) *producto
     int_left_1 = sum([lista_f[i] * L_gamm[i] for i in range(N)]) *producto
     int_left_2 = sum([lista_f[i] * L_gamm[i]**2 for i in range(N)]) *producto
     return [int_left_0, int_left_1, int_left_2]
@@ -130,48 +130,61 @@ def integrales(funcion, x_0, x_1, y_0, y_1):
 
     return[int_0, int_1, int_2]
 
-def Encontrar_polos(funcion, x_0, x_1, y_0, y_1, tol = 1e-10, contador = 1):
+def Encontrar_polos(funcion, x_0, x_1, y_0, y_1, tol = 1e-10):
     """
     Función que encuentra polos de una función compleja en un rectángulo dado.
     
     El parámetro tol es la diferencia que deben tener 2 números para ser
     considerados iguales.
     """
+
+    #Obtenemos las integrales sobre el retángulo dado
     ints = integrales(funcion, x_0, x_1, y_0, y_1)
     global cont
 
-    if (abs(ints[1].real) <=tol and abs(ints[1].imag) <= tol):
+    #Checamos si las integrales 0 y 1 son 0
+    if (abs(ints[0].real) <= tol and abs(ints[0].imag) <= tol and
+        abs(ints[1].real) <= tol and abs(ints[1].imag) <= tol):
+        #En caso de que lo sean, no retornamos nada y salimos de la función
         return
+    
+    #Definimos el polo tentativo
     polo_1 = ints[1]/ints[0]
     polo_2 = ints[2]/ints[1]
 
-
+    #Checamos que los polos tentativos sean los mimsmos
     if abs(polo_1.real - polo_2.real) <= tol and abs(polo_1.imag - polo_2.imag) <= tol:
+        
+        #En caso de que lo sean, significa que solo hay un polo en el rectángulo
+        #y retornamos un promedio de los polos tentativos
         resultado = (ints[1]/ints[0] + ints[2]/ints[1])/2
         return resultado
-        
+    
+    #Si los polos tentativos no son iguales hay más de un polo en el rectángulo
     else:
+        #Dividimos el rectángulo en 4 y aplicamos la función en cada uno de los cuadros
         cuadro_izq = Encontrar_polos(funcion, x_0, (x_0 + x_1)/2, (y_0 + y_1)/2, y_1, tol)
         cuadro_der = Encontrar_polos(funcion, (x_0 + x_1)/2, x_1, (y_0 + y_1)/2, y_1, tol)
         cuadro_arr = Encontrar_polos(funcion, (x_0 + x_1)/2, x_1, y_0, (y_0 + y_1)/2, tol)
         cuadro_abj = Encontrar_polos(funcion, x_0, (x_0 + x_1)/2, y_0, (y_0 + y_1)/2, tol)
 
         lista = [cuadro_izq, cuadro_der, cuadro_arr, cuadro_abj]
+        #Quitamos los None de la lista, es decir los rectángulos que no tienen polos
         filtrada = [i for i in lista if i != None]
+
+        #Quitamos los polos repetidos
         filtrada = filtrado_igualdades(filtrada)
         
         if len(filtrada) == 0:
             return
-        elif len(filtrada) == 1:
-            return filtrada[0]
-        elif len(filtrada) == 2:
-            return filtrada[0], filtrada[1]
-        elif len(filtrada) == 3:
-            return filtrada[0], filtrada[1], filtrada[2]
-        elif len(filtrada) == 4:
-            return filtrada[0], filtrada[1], filtrada[2], filtrada[3]
+        else:
+            return tuple(filtrada)
+            
 
 def filtrado_igualdades(cosa, tol = 1e-10):
+    """
+    Función que quita los elementos repetidos de una lista.
+    """
     polos_sin_filtrar = list(cosa)
     for i in range(len(polos_sin_filtrar)):
         if polos_sin_filtrar[i] == None:
@@ -185,7 +198,7 @@ def filtrado_igualdades(cosa, tol = 1e-10):
         
 
 def amortiguado(t):
-    return t/(-t**2-t*2j*(5) + 8**2)
+    return 1/(-t**2-t*2j*(5) + 8**2)
 
 def hem(z,t):
     return exp(-z*t*1j)/(z-1-1j)
