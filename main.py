@@ -8,7 +8,7 @@ Autor: DanRoal
 import numpy as np
 import sympy as sp
 import time
-from cmath import exp
+from cmath import exp, log
 from numba import njit
 
 #definimos el cambio de variable
@@ -177,6 +177,8 @@ def Encontrar_polos(funcion, x_0, x_1, y_0, y_1, tol = 1e-10):
         
         if len(filtrada) == 0:
             return
+        elif len(filtrada) == 1:
+            return filtrada[0]
         else:
             return tuple(filtrada)
             
@@ -185,6 +187,9 @@ def filtrado_igualdades(cosa, tol = 1e-10):
     """
     Función que quita los elementos repetidos de una lista.
     """
+    if type(cosa) == complex:
+        return cosa
+
     polos_sin_filtrar = list(cosa)
     for i in range(len(polos_sin_filtrar)):
         if polos_sin_filtrar[i] == None:
@@ -200,19 +205,18 @@ def filtrado_igualdades(cosa, tol = 1e-10):
 def amortiguado(t):
     return 1/(-t**2-t*2j*(5) + 8**2)
 
-def hem(z,t):
-    return exp(-z*t*1j)/(z-1-1j)
+
+
+def test(z):
+    return exp(.5*(log(z)))
 
 
 tic = time.time()
-polos = Encontrar_polos(amortiguado, x_0=-10, x_1=10, y_0=-10, y_1=10)
+polos = Encontrar_polos(test, x_0=-10, x_1=10, y_0=0.0001, y_1=100)
 toc = time.time()
 
 if polos == None:
     print("No se encontró ningún polo")
 else:
-    print(f"Se encontraron {len(polos)} polos")
-    print(f"Los polos son:")
-    for i in polos:
-        print(i)
+    print(polos)
 print(f"tiempo de ejecución: {toc-tic}")
