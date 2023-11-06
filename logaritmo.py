@@ -35,3 +35,7 @@ ima = numero.imag
 print(sqrt(-1.0-0.0j))
 print(log(complex(-1.0,0.0)))
 print(custom_log(1j, corte = pi/2, flip = False))
+
+print("-"*50)
+print(log(complex(0.0,0.0)))
+

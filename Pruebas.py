@@ -62,33 +62,4 @@ def f_1(z: complex):
 #nuestro intento con la aproximación
 
 
-tic_1 = time.time()
-lista_P_i = [P(i/N) for i in range(N+1)]
-l_DelP = [delta_P(i/N) for i in range(N+1)]
-
-int_0_abajo = sum([f_1(gamma_down(lista_P_i[i]*0.25))*l_DelP[i] for i in range(N)])* gamma_Delta_down
-int_0_derecha = sum([f_1(gamma_right(lista_P_i[i]*0.25 + 0.25))*l_DelP[i] for i in range(N)])* gamma_Delta_right
-int_0_arriba = sum([f_1(gamma_up(lista_P_i[i]*0.25 + 0.5))*l_DelP[i] for i in range(N)])* gamma_Delta_up
-int_0_izquierda = sum([f_1(gamma_left(lista_P_i[i]*.25 + 0.75))*l_DelP[i] for i in range(N)])* gamma_Delta_left
-
-int_1_abajo = sum([f(gamma_down(lista_P_i[i]*0.25))*l_DelP[i] for i in range(N)])* gamma_Delta_down
-int_1_derecha = sum([f(gamma_right(lista_P_i[i]*0.25 + 0.25))*l_DelP[i] for i in range(N)])* gamma_Delta_right
-int_1_arriba = sum([f(gamma_up(lista_P_i[i]*0.25 + 0.5))*l_DelP[i] for i in range(N)])* gamma_Delta_up
-int_1_izquierda = sum([f(gamma_left(lista_P_i[i]*.25 + 0.75))*l_DelP[i] for i in range(N)])* gamma_Delta_left
-
-int_2_abajo = sum([f(gamma_down(lista_P_i[i]*0.25))*l_DelP[i]*gamma_down(lista_P_i[i]*0.25) for i in range(N)])* gamma_Delta_down
-int_2_derecha = sum([f(gamma_right(lista_P_i[i]*0.25 + 0.25))*l_DelP[i]*gamma_right(lista_P_i[i]*0.25 + 0.25) for i in range(N)])* gamma_Delta_right
-int_2_arriba = sum([f(gamma_up(lista_P_i[i]*0.25 + 0.5))*l_DelP[i]*gamma_up(lista_P_i[i]*0.25 + 0.5) for i in range(N)])* gamma_Delta_up
-int_2_izquierda = sum([f(gamma_left(lista_P_i[i]*.25 + 0.75))*l_DelP[i]*gamma_left(lista_P_i[i]*.25 + 0.75) for i in range(N)])* gamma_Delta_left
-
-
-resultadoaprox = sp.simplify((int_0_abajo + int_0_derecha + int_0_arriba + int_0_izquierda)*h*.25)
-
-toc_1 = time.time()
-
-valor = 2,2,24 
-print(f"Resultado exacto: {valor}")
-
-print(f"Resultado aproximado: {resultadoaprox}")
-
-print(f"tiempo ejecución aproximado: {toc_1-tic_1}")
+print(type((0.5 + 0.5j)))
