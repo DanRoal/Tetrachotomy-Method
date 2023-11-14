@@ -56,7 +56,7 @@ def f(z):
 def f_1(z):
     return 1/((z - (0.2 + 0.2j))*(z - (0.8 + 0.8j)))
 
-N=8000
+N=40000
 h = (1)/N
 cont = 0
 
@@ -205,18 +205,20 @@ def filtrado_igualdades(polos_sin_filtrar, tol = 1e-10):
 def amortiguado(t):
     return 1/(-t**2-t*2j*(5) + 8**2)
 
-
-
 def test(z):
     return exp(.5*(log(1 + amortiguado(z))))
 
 
 tic = time.time()
-polos = Encontrar_polos(amortiguado, x_0=-10, x_1=10, y_0=-10, y_1=10)
+polos = Encontrar_polos(test, x_0=-10, x_1=10, y_0=-10, y_1=10, tol= 1e-4)
 toc = time.time()
 
 if polos == None:
     print("No se encontró ningún polo")
+elif type(polos) == complex:
+    print(f"Se encontró el polo {polos}")
 else:
-    print(polos)
+    print(f"Se encontraron {len(polos)} polos:")
+    for i in range(len(polos)):
+        print(f"polo {i+1}: {polos[i]}")
 print(f"tiempo de ejecución: {toc-tic}")
