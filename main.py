@@ -56,7 +56,7 @@ def f(z):
 def f_1(z):
     return 1/((z - (0.2 + 0.2j))*(z - (0.8 + 0.8j)))
 
-N=4000
+N=8000
 h = (1)/N
 cont = 0
 
@@ -183,20 +183,20 @@ def Encontrar_polos(funcion, x_0, x_1, y_0, y_1, tol = 1e-10):
             return tuple(filtrada)
             
 
-def filtrado_igualdades(cosa, tol = 1e-10):
+def filtrado_igualdades(polos_sin_filtrar, tol = 1e-10):
     """
     Función que quita los elementos repetidos de una lista.
     """
-    if type(cosa) == complex:
-        return cosa
+    if len(polos_sin_filtrar) == 0:
+        return polos_sin_filtrar
 
-    polos_sin_filtrar = list(cosa)
+
     for i in range(len(polos_sin_filtrar)):
         if polos_sin_filtrar[i] == None:
             continue
         for j in range(i+1, len(polos_sin_filtrar)):
-            if (abs(polos_sin_filtrar[i].real - polos_sin_filtrar[j].real) <= tol and 
-                abs(polos_sin_filtrar[i].imag - polos_sin_filtrar[j].imag) <= tol):
+            if (abs(polos_sin_filtrar[i].real - polos_sin_filtrar[j].real) <= 1e-2 and 
+                abs(polos_sin_filtrar[i].imag - polos_sin_filtrar[j].imag) <= 1e-2):
                 polos_sin_filtrar[j] = None
     polos_filtrados = [i for i in polos_sin_filtrar if i != None]
     return polos_filtrados
@@ -208,11 +208,11 @@ def amortiguado(t):
 
 
 def test(z):
-    return exp(.5*(log(z)))
+    return exp(.5*(log(1 + amortiguado(z))))
 
 
 tic = time.time()
-polos = Encontrar_polos(test, x_0=-10, x_1=10, y_0=0.0001, y_1=100)
+polos = Encontrar_polos(amortiguado, x_0=-10, x_1=10, y_0=-10, y_1=10)
 toc = time.time()
 
 if polos == None:
