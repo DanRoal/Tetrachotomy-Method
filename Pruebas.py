@@ -8,6 +8,7 @@ import sympy as sp
 import matplotlib.pyplot as plt
 from scipy.integrate import quad
 import time
+import random
 #definimos el cambio de variable
 def P(x):
     return x**3 *(6*x**2 - 15*x + 10)
@@ -60,6 +61,18 @@ def f_1(z: complex):
     return 1/(z - (0.5 + 0.5j))
 
 #nuestro intento con la aproximación
+def func(array):
+    t=len(array)*[0]
+    i=0
+    for e in array:
+        if e:
+           t[i]=e
+           i+=1
+    return t
 
-
-print(type((0.5 + 0.5j)))
+n = 200000
+arr = [random.randint(0,9) for i in range(n)]
+tic = time.time()
+x = func(arr)
+toc = time.time()
+print("Elapsed time in seconds: ", toc-tic)
