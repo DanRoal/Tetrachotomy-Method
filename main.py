@@ -8,8 +8,8 @@ Autor: DanRoal
 import numpy as np
 import sympy as sp
 import time
-from cmath import exp, log
-from numba import njit
+from cmath import exp, log, pi
+from logaritmo import custom_log
 
 #definimos el cambio de variable
 x_0, x_1 = 0, 1
@@ -56,9 +56,8 @@ def f(z):
 def f_1(z):
     return 1/((z - (0.2 + 0.2j))*(z - (0.8 + 0.8j)))
 
-N=40000
+N=4000
 h = (1)/N
-cont = 0
 
 lista_P = [Pdefault(i/N) for i in range(N)]
 list_delP = [delta_Pdefault(i/N) for i in range(N)]
@@ -140,7 +139,6 @@ def Encontrar_polos(funcion, x_0, x_1, y_0, y_1, tol = 1e-10):
 
     #Obtenemos las integrales sobre el retángulo dado
     ints = integrales(funcion, x_0, x_1, y_0, y_1)
-    global cont
 
     #Checamos si las integrales 0 y 1 son 0
     if (abs(ints[0].real) <= tol and abs(ints[0].imag) <= tol and
@@ -173,7 +171,7 @@ def Encontrar_polos(funcion, x_0, x_1, y_0, y_1, tol = 1e-10):
         filtrada = [i for i in lista if i != None]
 
         #Quitamos los polos repetidos
-        filtrada = filtrado_igualdades(filtrada)
+        filtrada = filtrado_igualdades(filtrada, tol)
         
         if len(filtrada) == 0:
             return
@@ -195,8 +193,8 @@ def filtrado_igualdades(polos_sin_filtrar, tol = 1e-10):
         if polos_sin_filtrar[i] == None:
             continue
         for j in range(i+1, len(polos_sin_filtrar)):
-            if (abs(polos_sin_filtrar[i].real - polos_sin_filtrar[j].real) <= 1e-2 and 
-                abs(polos_sin_filtrar[i].imag - polos_sin_filtrar[j].imag) <= 1e-2):
+            if (abs(polos_sin_filtrar[i].real - polos_sin_filtrar[j].real) <= tol and 
+                abs(polos_sin_filtrar[i].imag - polos_sin_filtrar[j].imag) <= tol):
                 polos_sin_filtrar[j] = None
     polos_filtrados = [i for i in polos_sin_filtrar if i != None]
     return polos_filtrados
@@ -210,7 +208,7 @@ def test(z):
 
 
 tic = time.time()
-polos = Encontrar_polos(test, x_0=-10, x_1=10, y_0=-10, y_1=10, tol= 1e-4)
+polos = Encontrar_polos(test, x_0=-10, x_1=10, y_0=-10, y_1=10, tol= 0.02)
 toc = time.time()
 
 if polos == None:

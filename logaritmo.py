@@ -2,7 +2,6 @@
 construcción de función logaritmo a la cual se le pueda modificar el corte de rama
 
 """
-import cmath
 from cmath import log, polar, sqrt, cos, sin, pi
 
 def custom_log(z, corte = pi, flip = True):
@@ -38,10 +37,9 @@ def custom_sqrt(z, corte = pi, flip= False):
         return sqrt(complex(re,-im)) - diferencia
     return sqrt(r)*(cos((fase -diferencia)/2) + sin((fase - diferencia)/2)*1j)
 
-numero = cmath.rect(-1,(0)*pi)
 
-ima = numero.imag
-
-print(log(complex(-5.0 +1.0j,-0.0)))
-print(custom_log(-5 +1j, corte = pi/2,flip=False))
+if __name__ == "__main__":
+        
+    print(log(complex(-5.0 +1.0j,-0.0)))
+    print(custom_log(-5 +1j, corte = pi/2,flip=False))
 
