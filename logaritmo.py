@@ -23,7 +23,7 @@ def custom_log(z, corte = pi, flip = True):
         if fase > (-corte-pi) and fase <= (-corte+pi):
             imag = fase
         else:
-            imag = -2*pi - fase
+            imag = -2*pi + fase
         return complex(real, imag)
 
 def custom_sqrt(z, corte = pi, flip= False):
@@ -42,6 +42,6 @@ numero = cmath.rect(-1,(0)*pi)
 
 ima = numero.imag
 
-print(log(complex(-1.0,0.0)))
-print(custom_log(1j, corte = pi/2, flip = False))
+print(log(complex(-5.0 +1.0j,-0.0)))
+print(custom_log(-5 +1j, corte = pi/2,flip=False))
 
