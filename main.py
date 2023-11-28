@@ -171,7 +171,7 @@ def Encontrar_polos(funcion, x_0, x_1, y_0, y_1, tol = 1e-10):
         filtrada = [i for i in lista if i != None]
 
         #Quitamos los polos repetidos
-        filtrada = filtrado_igualdades(filtrada, tol)
+        #filtrada = filtrado_igualdades(filtrada, tol)
         
         if len(filtrada) == 0:
             return
@@ -204,11 +204,11 @@ def amortiguado(t):
     return 1/(-t**2-t*2j*(5) + 8**2)
 
 def test(z):
-    return exp(.5*(log(1 + amortiguado(z))))
+    return exp(.5*(custom_log(1 + amortiguado(z), corte = 6*pi/7)))
 
 
 tic = time.time()
-polos = Encontrar_polos(test, x_0=-10, x_1=10, y_0=-10, y_1=10, tol= 0.02)
+polos = Encontrar_polos(test, x_0=-10, x_1=10, y_0=-10, y_1=10, tol= 1e-4)
 toc = time.time()
 
 if polos == None:

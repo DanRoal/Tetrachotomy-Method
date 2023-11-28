@@ -4,7 +4,7 @@ construcción de función logaritmo a la cual se le pueda modificar el corte de 
 """
 from cmath import log, polar, sqrt, cos, sin, pi
 
-def custom_log(z, corte = pi, flip = True):
+def custom_log(z, corte = 0, flip = True):
     """
     Esta función calcula el logaritmo de un número complejo z, con corte de rama en corte
     """
