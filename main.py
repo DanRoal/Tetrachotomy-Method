@@ -8,7 +8,7 @@ Autor: DanRoal
 import numpy as np
 import sympy as sp
 import time
-from cmath import exp, log, pi, abs
+from cmath import exp, log, pi
 from logaritmo import custom_log, custom_arg
 
 #definimos el cambio de variable
