@@ -8,8 +8,8 @@ Autor: DanRoal
 import numpy as np
 import sympy as sp
 import time
-from cmath import exp, log, pi
-from logaritmo import custom_log
+from cmath import exp, log, pi, abs
+from logaritmo import custom_log, custom_arg
 
 #definimos el cambio de variable
 x_0, x_1 = 0, 1
@@ -199,16 +199,25 @@ def filtrado_igualdades(polos_sin_filtrar, tol = 1e-10):
     polos_filtrados = [i for i in polos_sin_filtrar if i != None]
     return polos_filtrados
         
+l_0 = 600
+cut = pi
+n_0 = 1
 
 def amortiguado(t):
     return 1/(-t**2-t*2j*(5) + 8**2)
 
-def test(z):
+def beta(z):
     return exp(.5*(custom_log(1 + amortiguado(z), corte = 6*pi/7)))
 
+def G(z):
+    return exp(1.0j*4*l_0*beta(z))
+
+def beta_1(z):
+    return (1/(2*l_0))*(pi*n_0 + (1/2)*custom_arg(G(z), corte = cut, flip = False) -
+                        (1.0j/2)*log(abs(G(z)))) - beta(z)
 
 tic = time.time()
-polos = Encontrar_polos(test, x_0=-10, x_1=10, y_0=-10, y_1=10, tol= 1e-4)
+polos = Encontrar_polos(beta_1, x_0=-10, x_1=10, y_0=-10, y_1=10, tol= 1e-4)
 toc = time.time()
 
 if polos == None:
